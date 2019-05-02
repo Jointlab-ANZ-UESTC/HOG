@@ -1,15 +1,12 @@
 import csv
 import requests
-from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 ua=UserAgent()
-resu=list()
 resulthtml='result.html'
 f=open(resulthtml,'w+')
 with open('urls.csv', 'r') as csvfile:
     readcsv = csv.reader(csvfile)
     hd={}
-    hd['User-Agent']=ua.random
     rows = [row for row in readcsv]
     f.write("""
      <!DOCTYPE html>
@@ -17,19 +14,32 @@ with open('urls.csv', 'r') as csvfile:
      <head>
      <title>result</title>
      </head>
-     <body>"""
+     <body>
+     <h1>set customer user agent</h1>
+     <table border="1">
+     <caption>result</caption>
+     <tr>
+          <td>URL</td>
+          <td>UserAgent</td>
+     </tr>      
+     """
     )
     for row in rows:
-        row1=row[0]
-        r = requests.get(row1.strip(), headers=hd)
-        if r.status_code == 200:
+         row1=row[0]
+         r = requests.get(row1.strip(), headers=hd)
+         str=ua.random
+         hd['User-Agent']=str
+         if r.status_code == 200:
              info = """
-             <p>%s</p>
-             <p>%s</p>
-             """%(row1,r)
+             <tr>
+             <td>%s</td>
+             <td>%s</td>
+             </tr>
+             """%(row1,str)
              f.write(info)
              print(row1,r)
     f.write("""
+     </table>
      </body>   
      </html>
      """
